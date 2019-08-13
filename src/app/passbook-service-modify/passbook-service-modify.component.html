@@ -1,0 +1,135 @@
+<div class="app-card">
+  <ng-template #confirmDeleteDialog>
+    <h2 matDialogTitle>Delete Service {{serviceInfo.name}}?</h2>
+    <mat-dialog-content>
+      <h3 *ngIf="serviceInfo.user!=null">
+        User Name: {{serviceInfo.user}}
+      </h3>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button matDialogClose color="warn" (click)="deleteService()">Delete</button>
+      <button mat-button matDialogClose color="primary">Cancel</button>
+    </mat-dialog-actions>
+  </ng-template>
+  <div class="header">
+    <h1 *ngIf="serviceId==null">Add Service</h1>
+    <h1 *ngIf="serviceId!=null">Modify Service</h1>
+  </div>
+  <div class="center-content">
+    <mat-form-field class="full-width">
+      <input matInput class="full-width"
+             placeholder="Service Name / Website"
+             cdkFocusInitial
+             [formControl]="serviceName">
+
+      <mat-error *ngIf="serviceName?.errors?.required">
+        Please enter a name for the service
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <input matInput class="full-width"
+             placeholder="User Name"
+             [formControl]="userName">
+      <mat-hint>Optional username helps differentiate multiple accounts.</mat-hint>
+    </mat-form-field>
+    <br />
+    <br />
+    <mat-slide-toggle class="app-margin full-width"
+                      [(ngModel)]="advancedToggle">
+      Show Advanced Settings
+    </mat-slide-toggle>
+    <mat-grid-list cols="4" rowHeight="80px">
+      <mat-grid-tile colspan="2">
+        <mat-slide-toggle class="app-margin full-width"
+                          [(ngModel)]="hasPassword">
+          Password
+        </mat-slide-toggle>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2" *ngIf="advancedToggle">
+        <mat-form-field class="full-width" *ngIf="hasPassword">
+          <input matInput class="full-width" type="number"
+                 placeholder="Password Length"
+                 min="1"
+                 [formControl]="passwordLength" />
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2">
+        <mat-slide-toggle class="app-margin full-width"
+                          [(ngModel)]="hasPin">
+          PIN
+        </mat-slide-toggle>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2" *ngIf="advancedToggle">
+        <mat-form-field class="full-width" *ngIf="hasPin">
+          <input matInput class="full-width" type="number"
+                 min="1"
+                 placeholder="PIN Length"
+                 [formControl]="pinLength" />
+        </mat-form-field>
+      </mat-grid-tile>
+
+
+      <mat-grid-tile colspan="1">
+        <h3 class="full-width">Version</h3>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="1">
+        {{serviceInfo.count}}
+      </mat-grid-tile>
+      <mat-grid-tile colspan="1">
+        <button mat-stroked-button style="width:100%;height:100%"
+                (click)="versionDecrement()"
+                color="accent">
+          Decrement
+        </button>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="1">
+        <button mat-stroked-button style="width:100%;height:100%"
+                (click)="versionIncrement()"
+                color="accent">
+          Increment
+        </button>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="4">
+        <p>If you need to change the password for this service, increment the version number to generate a new password.</p>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <h3 class="full-width">Style</h3>
+    <div class="center">
+      <button mat-fab style="background-color:white; color:black;margin-right:5px"
+              (click)="setColor(0)">
+        Style
+      </button>
+      <button mat-fab style="background-color:black; color:white;margin-right:5px"
+              (click)="setColor(1)">
+        Style
+      </button>
+      <button mat-fab style="background-color:red; color:white;margin-right:5px"
+              (click)="setColor(2)">
+        Style
+      </button>
+      <button mat-fab style="background-color:green; color:white;margin-right:5px"
+              (click)="setColor(3)">
+        Style
+      </button>
+      <button mat-fab style="background-color:blue; color:white;margin-right:5px"
+              (click)="setColor(4)">
+        Style
+      </button>
+    </div>
+    <div class="center">
+      <button mat-flat-button color="warn"
+              *ngIf="serviceId!=null"
+              (click)="popupDialog(confirmDeleteDialog, {serviceInfo:serviceInfo})">
+        Delete Service
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button mat-button (click)="onSave()" color="primary" [disabled]="!formIsValid()" *ngIf="serviceId==null">Create</button>
+    <button mat-button (click)="onSave()" color="primary" [disabled]="!formIsValid()" *ngIf="serviceId!=null">Save</button>
+
+    <button mat-button (click)="onCancel()">Cancel</button>
+  </div>
+</div>

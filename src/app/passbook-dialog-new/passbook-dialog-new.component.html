@@ -1,0 +1,51 @@
+<div class="fixActionRow">
+  <h1 mat-dialog-title>Create Passbook</h1>
+  <div mat-dialog-content>
+    <form [formGroup]="passbookOptions">
+      <mat-form-field class="full-width">
+        <input matInput
+               placeholder="Passbook Name"
+               cdkFocusInitial
+               [formControl]="passbookName"
+               [errorStateMatcher]="errorStateMatcher">
+
+        <mat-error *ngIf="passbookName?.errors?.required">
+          Please enter a name for the book
+        </mat-error>
+      </mat-form-field>
+      <!--
+      <mat-slide-toggle class="app-margin full-width"
+                        [formControl]="storePassphrase">
+        Store Passphrase
+      </mat-slide-toggle>
+      -->
+      <p *ngIf="!storePassphrase.value">
+        You will need to type your passphrase in each time this book is opened.
+      </p>
+      <div *ngIf="storePassphrase.value">
+        <p>This is your secret passphrase. Memorize it and don't share it with anyone.</p>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Passphrase"
+                  [formControl]="passphrase"
+                  [errorStateMatcher]="errorStateMatcher" />
+          <mat-error *ngIf="passphrase?.errors?.required">
+            Please enter a valid passphrase
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Passphrase (Confirm)"
+                  [formControl]="passphraseConfirm"
+                  [errorStateMatcher]="errorStateMatcher" />
+          <mat-error *ngIf="passphraseConfirm?.hasError('values-must-match')">
+            The passphrases must match
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+  <div class="spacer"></div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCreate()" color="primary" [disabled]="!formIsValid()">Create</button>
+    <button mat-button (click)="onCancel()">Cancel</button>
+  </div>
+</div>

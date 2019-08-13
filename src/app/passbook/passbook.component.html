@@ -1,0 +1,116 @@
+<div *ngIf="!passbook">
+  Loading...
+</div>
+<div *ngIf="passbook!=undefined">
+  <mat-toolbar>
+    <div class="row">
+      <div class="column">
+        <a [routerLink]="['/passbooks', passbook.id]" mat-button *ngIf="serviceId!=undefined">
+          <mat-icon>arrow_back_ios</mat-icon>
+        </a>
+        &nbsp;
+      </div>
+      <div class="column" style="text-align:center;">
+        {{passbook.name}}
+      </div>
+      <div class="column">
+        <div class="flex-spacer"></div>
+          <button mat-button *ngIf="serviceId==undefined"
+                  style="position:absolute;right:0"
+                  (click)="modifyPassbook()"
+                  ><mat-icon>settings</mat-icon></button>
+      </div>
+    </div>
+  </mat-toolbar>
+  <div *ngIf="serviceId!=undefined">
+    <app-passbook-service-item [passbookId]="passbookId"
+                               [serviceId]="serviceId"></app-passbook-service-item>
+
+  </div>
+  <div *ngIf="serviceId==undefined">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title style="flex-direction:column;justify-content:center;">
+            <h3>Passphrase</h3>
+          </mat-panel-title>
+          <mat-panel-description *ngIf="!passbook.hideVisualPassphraseHash">
+            <div class="flex-spacer"></div>
+            <h1>{{passbook.visualPassphrase}}</h1>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div class="container">
+          <p *ngIf="changePassphase!=PassphraseState.Modify">{{passbook.passphrase}}</p>
+
+          <div class="flex-spacer"></div>
+          <h1 *ngIf="passbook.hideVisualPassphraseHash">{{passbook.visualPassphrase}}</h1>
+          <mat-form-field appearance="outline" *ngIf="changePassphase==PassphraseState.Modify">
+            <textarea matInput [(ngModel)]="passphraseText"></textarea>
+            <mat-hint>This is your secret passphrase. Memorize it and don't share it with anyone. It is case sensative and puncutation and spacing matters.</mat-hint>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <div class="services-container">
+      <ng-container *ngFor="let service of services; index as serviceId">
+        <app-passbook-service-item [passbookId]="passbookId"
+                                   [serviceId]="service.id"
+                                   [service]="service"
+                                   [passbook]="passbook"
+                                   [passbookComponent]="this"
+                                   class="tile"
+                                   asTile="true"></app-passbook-service-item>
+      </ng-container>
+      <!--
+
+      <div *ngFor="let service of services; index as serviceId"
+           class="tile mat-elevation-z4 flex-column">
+        <div matRipple class="ripple-container"
+             (click)="selectService(serviceId)"
+             style="height:75%"
+             [routerLink]="['/passbooks', passbook.id, service.id]"
+             [style.border]="service.color? '10px solid':'none'"
+             [style.border-color]="service.color?  styleBackgroundColor(service.color):'none'">
+          <h2>
+            {{service.name}}
+          </h2>
+          <h3>{{service.user}}</h3>
+        </div>
+        <button mat-stroked-button
+                class="copy-button"
+                (click)="console.log('clicked')"
+                aria-label="Copy to clipboard"
+                style="width:100%;height:25%"
+                matTooltip="Copy">
+          <mat-icon>file_copy</mat-icon>
+        </button>
+      </div>
+      -->
+
+
+    </div>
+    <!--
+    <mat-grid-list cols="5">
+
+      <app-passbook-service-item *ngFor="let service of services; index as serviceId"
+                                 [passbookId]="passbookId"
+                                 [serviceId]="service.id"></app-passbook-service-item>
+
+    </mat-grid-list>
+    -->
+    <!--
+    <mat-list>
+      <mat-list-item *ngFor="let service of passbook.services">
+        <mat-icon mat-list-icon>folder</mat-icon>
+        <h4 mat-line>{{service.name}}</h4>
+        <p mat-line> {{service.user}} </p>
+      </mat-list-item>
+    </mat-list>
+    -->
+    <button mat-fab
+            class="fab-container"
+            (click)="addNewService()"
+            ><mat-icon>add</mat-icon></button>
+  </div>
+</div>

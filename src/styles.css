@@ -1,0 +1,48 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+/*@import "~@angular/material/prebuilt-themes/purple-green.css";*/
+html,body {
+  min-width: 480px;
+  min-height: 640px;
+  overflow: hidden;
+}
+.full-width {
+  width: 100%;
+}
+.cdk-global-scrollblock {
+  position: unset !important;
+  overflow-y: hidden !important;
+}
+.app-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app-card .center-content {
+  overflow: auto;
+  flex: 1;
+}
+
+.wide-panel.mat-bottom-sheet-container-medium,
+.wide-panel.mat-bottom-sheet-container-large {
+  min-width: 90vw !important;
+  /*max-width: 90vw !important;
+  width: 95% !important;*/
+}
+.tall-panel {
+  max-height: 90vh !important;
+  height: 95% !important;
+}
+.mat-bottom-sheet-container-large, .mat-bottom-sheet-container-medium, .mat-bottom-sheet-container-xlarge {
+  /* unset maximum width */
+  max-width: unset !important;
+  min-width: unset !important;
+}
+
+.mat-bottom-sheet-container-large, .mat-bottom-sheet-container-medium, .mat-bottom-sheet-container-xlarge {
+  /* remove border radius */
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}

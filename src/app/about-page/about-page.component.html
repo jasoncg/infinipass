@@ -1,0 +1,128 @@
+<h1>What is it?</h1>
+<p>
+  Infinipass is part password generator, part password manager.
+  It can generate complex unique passwords based on something you know
+  (your passphrase), and something about the service you are accessing
+  (such as the domain name) and something unique to you (your username
+  for the service).
+</p>
+
+<h1>How do I use it?</h1>
+<p>
+  Create a book to generate multiple passwords with the same passphrase.
+</p>
+<p>
+  First, expand the left menu and click the + button.
+</p>
+<p>
+  Next, name the book and set your passphrase. The longer and more complex
+  your passphrase the more difficult it would be for someone to crack it.
+</p>
+<p>
+  Any character is allowed, even foreign languages and emoji.
+</p>
+<p>
+  Finally, add each service you want to generate a password or PIN for.
+</p>
+
+<h1>What should I use for my passphrase?</h1>
+<p>
+  Your passphrase should be something secret that you can remember.
+  It can, and should, be long. It can have any combination of characters,
+  including combinations of foreign languages and emoji.
+</p>
+<p>
+  Even though it is optional, it is highly recommended that you always
+  include a username when generating a password. This can be the username
+  that you use to access the service.
+</p>
+<h1>I just want to use it without saving anything</h1>
+<!--<app-quick-generate></app-quick-generate>-->
+<p>
+  Use the  <a [routerLink]="['/quick']">Quick Generate</a> tool.
+</p>
+
+<h1>What's with the emoji?</h1>
+<p>
+  Three emoji are generated based on your passphrase. When the passphase
+  is hidden the emoji can help indicate if the passphrase was typed
+  correctly.
+</p>
+<div>
+  <p>For example, suppose your passphrase is</p>
+  <span style="font-style:italic">The quick brown fox jumped over the lazy dog!</span><br />
+  <p>This phrase will always generate the following symbols:</p>
+  <span style="font-size:42px">🍀✏🚠 </span>
+  <p>
+    If you later typed the passphrase in incorrectly but remembered
+    the symbols you could determine that the passphrase was entered
+    incorrectly without seeing the passphrase itself.
+  </p>
+</div>
+<h1>Is it safe?</h1>
+<p>
+  The web version of this app does not send anything to any server. All
+  of your information, including your passphrase and the list of websites
+  and services you create, are only saved in your web browser.
+</p>
+<p>
+  It is very important to memorize your passphrase and not share it
+  with anyone.
+</p>
+<p>
+  You may also opt to encrypt the local database from the Settings page.
+  If the database is encrypted then a password must be provided each
+  time the application is started.
+</p>
+<p>
+  The mobile app version also doesn't send anything to a server. The
+  mobile app explicitly does not have permissions to access the Internet
+  at all.
+</p>
+<p>
+  Since your information is only saved in your web browser or mobile
+  device, if you need to access your passwords from another computer
+  you will need to type your passphrase and add your services/websites
+  again from that device.
+</p>
+<h1>How do I export or backup my database?</h1>
+<p>
+  The database can be encrypted and exported for backup or for copying
+  to another system from the <a [routerLink]="['/import-export']">Import-Export</a> page.
+
+</p>
+<h1>How does it work?</h1>
+
+<ol>
+  <li>
+    Your passphrase is combined with the name of the service and
+    the username you use for the service, as well as the current
+    version number, into a single string.
+    Unless set otherwise, the service name and username are converted
+    to lower case.
+  </li>
+  <li>
+    The string is passed to WebCrypto's <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a> function
+    using SHA-512 and iterated 20480 times to generate a 128 bit hash value.
+  </li>
+  <li>
+    The hash value is used to seed a random number generator (sfc32).
+  </li>
+  <li>
+    The random number generator is used to generate each character of
+    the password.
+  </li>
+  <li>
+    Finally, the password shuffled.
+  </li>
+</ol>
+
+<h1>Links and Libraries</h1>
+<ul>
+  <li><a href="https://github.com/jasoncg/infinipass">Infinipass Project</a></li>
+  <li><a href="https://angular.io/">Angular</a></li>
+  <li><a href="https://material.angular.io/">Angular Material</a></li>
+  <li><a href="https://github.com/Daplie/knuth-shuffle">Knuth-Shuffle</a></li>
+  <li><a href="https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript">sfc32 random number generator</a></li>
+  <li><a href="https://lortonlabs.com">Lorton Labs</a></li>
+</ul>

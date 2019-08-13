@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Infinipass Password Manager",
+  "version": "1.0",
+
+  "description": "Generates and manages passwords deterministically.",
+  "homepage_url": "https://pw.lortonlabs.com",
+  "icons": {
+    "48": "icons/infinipass-48.png"
+  },
+
+  "permissions": [
+    "activeTab"
+  ],
+  "options_ui": {
+    "page": "popup/index.html"
+  },
+  "browser_action": {
+    "default_icon": "icons/infinipass-32.png",
+    "default_title": "Infinipass Password Manager",
+    "default_popup": "popup/index.html#browser-helper"
+  },
+  "sidebar_action": {
+    "default_title": "Inifinpass Password Manager",
+    "default_panel": "popup/index.html",
+    "default_icon": "icons/infinipass-32.png"
+  }
+}

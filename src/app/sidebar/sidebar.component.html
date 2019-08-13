@@ -1,0 +1,22 @@
+<mat-toolbar color="primary" class="example-toolbar">
+  <mat-toolbar-row>
+    Books {{passbookId}}
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="openDialogNewBook()" aria-label="Add new book"><mat-icon>add</mat-icon></button>
+  </mat-toolbar-row>
+</mat-toolbar>
+<mat-nav-list class="app-nav-list">
+  <mat-list-item *ngFor="let passbook of passbooks; index as pid"
+                 [routerLink]="['/passbooks', passbook.id]"
+                 [title]="passbook.name"
+                 [class.selected]="passbook.id==passbookId">
+    {{passbook.name}} {{passbookId}}
+  </mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item [routerLink]="['/quick']">Quick Generate</mat-list-item>
+  <mat-list-item [routerLink]="['/settings']">Settings</mat-list-item>
+
+</mat-nav-list>
+<!--<div *ngFor="let passbook of passbooks; index as passbookId">
+  <h3><a [title]="passbook.name">{{passbook.name}}</a></h3>
+</div>-->

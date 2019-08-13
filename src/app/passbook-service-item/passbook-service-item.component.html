@@ -1,0 +1,157 @@
+<div *ngIf="asTile"
+     class="mat-elevation-z4 flex-column"
+     style="height:100%">
+  <ng-container *ngIf="passbook==null||service==null">
+
+  </ng-container>
+  <ng-container *ngIf="passbook!=null&&service!=null && passbookComponent!=null">
+
+    <div matRipple class="ripple-container"
+         (click)="passbookComponent.selectService(serviceId)"
+         style="height:75%; border:10px solid"
+         [routerLink]="['/passbooks', passbook.id, service.id]"
+         [style.border-color]="service.color?passbookComponent.styleBackgroundColor(service.color):'rgba(0,0,0,0)'">
+      <!--[style.border]="service.color? '10px solid':'none'"-->
+      <h2>
+        {{service.name}}
+      </h2>
+      <h3>{{service.user}}</h3>
+    </div>
+    <div class="copy-button"
+        style="width:100%;height:25%">
+
+      <button mat-stroked-button
+              *ngIf="service.password"
+              (click)="copyToClipboardPassword()"
+              aria-label="Copy Password to clipboard"
+              style="flex:2"
+              matTooltip="Copy">
+        <mat-icon>file_copy</mat-icon>
+        <ng-container *ngIf="service.pin">Password</ng-container>
+      </button>
+      <button mat-stroked-button
+              *ngIf="service.pin"
+              (click)="copyToClipboardPin()"
+              aria-label="Copy PIN to clipboard"
+              style="flex:1"
+              matTooltip="Copy">
+        <mat-icon>file_copy</mat-icon>
+        <ng-container *ngIf="service.password">PIN</ng-container>
+      </button>
+    </div>
+  </ng-container>
+</div>
+<ng-container *ngIf="!asTile">
+  <mat-card *ngIf="!service">
+    <mat-card-header>Loading</mat-card-header>
+  </mat-card>
+  <mat-card *ngIf="service"
+            style="border:10px solid"
+            [style.border-color]="service.color?styleBackgroundColor():'rgba(0,0,0,0)'">
+    <!--
+  <mat-card-header [ngStyle]="{'color': styleColor(), 'background-color': styleBackgroundColor()}">
+    <mat-card-title [ngStyle]="{'color': styleColor()}">
+      {{service.name}}
+    </mat-card-title>
+    <mat-card-subtitle [ngStyle]="{'color': styleColor()}">
+      {{service.user}}
+    </mat-card-subtitle>
+  </mat-card-header>-->
+    <mat-toolbar>
+      <mat-toolbar-row>
+        {{service.name}}
+        <div class="flex-spacer"></div>
+        <button mat-button color="primary" (click)="modifyService()"><mat-icon>more_vert</mat-icon></button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <mat-list role="list">
+      <mat-grid-list cols="3" *ngIf="service.password" rowHeight="50px">
+        <ng-container *ngIf="service.user && service.user!=''">
+          <mat-grid-tile>
+            <h3>Username</h3>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="2">
+            {{service.user}}
+          </mat-grid-tile>
+        </ng-container>
+        <mat-grid-tile>
+          <h3>Password</h3>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <p *ngIf="passwordVisible">{{password}}</p>
+          <button *ngIf="!passwordVisible" mat-stroked-button (click)="showPassword()" color="accent">Show</button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <button mat-stroked-button (click)="copyToClipboardPassword()" aria-label="Copy Password to clipboard" matTooltip="Copy"><mat-icon>file_copy</mat-icon></button>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <mat-grid-list cols="3" *ngIf="service.pin" rowHeight="50px">
+        <mat-grid-tile>
+          <h3>PIN</h3>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <p *ngIf="pinVisible">{{pin}}</p>
+          <button *ngIf="!pinVisible" mat-stroked-button (click)="showPin()" color="accent">Show</button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <button mat-stroked-button (click)="copyToClipboardPin()" aria-label="Copy PIN to clipboard" matTooltip="Copy"><mat-icon>file_copy</mat-icon></button>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-list>
+
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Custom Strings</mat-panel-title>
+          <mat-panel-description>This can be used to create responses for secret questions</mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-grid-list cols="10" rowHeight="75px">
+          <mat-grid-tile colspan="5">
+            <mat-form-field class="full-width" style="width:100%;height:100%">
+              <input matInput class="full-width"
+                     placeholder="Text"
+                     (keyup)="generateCustomEncryptedStringRefresh()"
+                     [(ngModel)]="encryptCustomString">
+              <mat-hint>
+                White space characters will be removed and
+                the text coverted to lower case automatically
+                before encrypting
+              </mat-hint>
+            </mat-form-field>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="3">
+            <app-random-animated-text symbols="01"
+                                      speed="20"
+                                      count="5"
+                                      *ngIf="timeoutEncryptStringRefresh!=null"></app-random-animated-text>
+            <p *ngIf="encryptCustomStringResultVisible && timeoutEncryptStringRefresh==null">{{encryptCustomStringResult}}</p>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="1">
+            <button *ngIf="!encryptCustomStringResultVisible"
+                    [disabled]="timeoutEncryptStringRefresh"
+                    mat-stroked-button
+                    (click)="encryptCustomStringResultVisible=!encryptCustomStringResultVisible" color="accent">
+              Show
+            </button>
+            <button *ngIf="encryptCustomStringResultVisible"
+                    [disabled]="timeoutEncryptStringRefresh"
+                    mat-stroked-button
+                    (click)="encryptCustomStringResultVisible=!encryptCustomStringResultVisible" color="accent">
+              Hide
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="1">
+            <button mat-stroked-button
+                    [disabled]="timeoutEncryptStringRefresh"
+                    (click)="copyToClipboardEncryptCustomStringResult()" aria-label="Copy custom encrypted string to clipboard"
+                    matTooltip="Copy">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+
+          </mat-grid-tile>
+
+        </mat-grid-list>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-card>
+</ng-container>

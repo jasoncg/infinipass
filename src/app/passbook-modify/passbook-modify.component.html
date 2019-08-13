@@ -1,0 +1,187 @@
+<div class="app-card">
+  <ng-template #confirmDeleteDialog>
+    <h2 matDialogTitle>Delete Passbook {{passbook.name}}?</h2>
+    <mat-dialog-content>
+      <h3>
+        This will delete the entire passbook, including all services
+        within it.
+      </h3>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button matDialogClose color="warn" (click)="deletePassbook()">Delete</button>
+      <button mat-button matDialogClose color="primary">Cancel</button>
+    </mat-dialog-actions>
+  </ng-template>
+  <div class="header">
+    <h1 *ngIf="passbookId==null">Create Passbook</h1>
+    <h1 *ngIf="passbookId!=null">Modify Passbook</h1>
+  </div>
+  <div class="center-content">
+    <mat-form-field class="full-width">
+      <input matInput class="full-width"
+             placeholder="Passbook Name"
+             cdkFocusInitial
+             tabindex="1"
+             type="text"
+             [formControl]="passbookName">
+
+      <mat-error *ngIf="passbookName?.errors?.required">
+        Enter a name for the passbook
+      </mat-error>
+    </mat-form-field>
+    <!--
+    <mat-form-field class="full-width">
+      <input matInput class="full-width"
+             placeholder="Passphrase"
+             [formControl]="passphrase">
+      <mat-hint></mat-hint>
+    </mat-form-field>-->
+
+
+    <div class="full-width" style="display:flex">
+      <mat-form-field style="flex-grow:100">
+        <input matInput placeholder="Passphrase"
+               tabindex="2"
+               autocomplete="off"
+               autocorrect="off"
+               autocapitalize="none"
+               [type]="passphraseVisible?'text':'password'"
+               (keyup)="generatePassphraseVisualization()"
+               (change)="generatePassphraseVisualization()"
+               [formControl]="passphrase" />
+        <button mat-button color="primary"
+                *ngIf="passphraseVisible"
+                matSuffix
+                aria-label="Hide Passphrase"
+                (click)="passphraseVisible=false">
+          Hide
+        </button>
+        <button mat-button color="primary"
+                *ngIf="!passphraseVisible"
+                matSuffix
+                aria-label="Show Passphrase"
+                (click)="passphraseVisible=true">
+          Show
+        </button>
+        <mat-hint>Case Sensitive. This should be something you can memorize.</mat-hint>
+      </mat-form-field>
+      <!--
+      <mat-slide-toggle [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="passphraseVisible">
+        Show Passphrase
+      </mat-slide-toggle>
+        -->
+      <h1 style="flex-grow:1;width:150px;text-align:center">
+        <ng-container *ngIf="timeoutVisualization===null">{{visualPassphrase}}</ng-container>
+        <app-random-animated-text [symbols]="visualizationCharacters"
+                                  *ngIf="timeoutVisualization!==null"
+                                  style="color:rgba(1,1,1,0.5)"
+                                  speed="50"></app-random-animated-text>
+      </h1>
+    </div>
+
+
+
+    <br />
+    <br />
+    <mat-slide-toggle class="app-margin full-width"
+                      [(ngModel)]="passbook.hideVisualPassphraseHash">
+      Hide Visual Passphrase
+    </mat-slide-toggle>
+    <mat-slide-toggle class="app-margin full-width"
+                      [(ngModel)]="passbook.advancedSettings">
+      Enable Advanced Settings
+    </mat-slide-toggle>
+    <span *ngIf="passbook.advancedSettings">
+      Warning: Changing these settings will change how your passwords
+      are generated. To regenerate your passwords in the future you
+      will need to ensure these settings are configured exactly the
+      same way.
+    </span>
+    <mat-grid-list cols="4" rowHeight="80px">
+      <mat-grid-tile colspan="2" *ngIf="passbook.advancedSettings">
+        <mat-form-field class="full-width">
+          <input matInput class="full-width" type="number"
+                 placeholder="Default Password Length"
+                 min="1"
+                 [(ngModel)]="passbook.defaultPasswordLength" />
+        </mat-form-field>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2" *ngIf="passbook.advancedSettings">
+        <mat-form-field class="full-width">
+          <input matInput class="full-width" type="number"
+                 min="1"
+                 placeholder="Default PIN Length"
+                 [(ngModel)]="passbook.defaultPinLength" />
+        </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <div class="full-width" *ngIf="passbook.advancedSettings">
+      <mat-slide-toggle class="app-margin full-width"
+                        [(ngModel)]="passbook.caseSensitiveServiceData">
+        Case Sensitive Service Name and User Name
+      </mat-slide-toggle>
+      <div>
+        <mat-hint>
+          By default, service name (website) and user name are case insensitive. It is recommeneded you leave this disabled.
+        </mat-hint>
+      </div>
+    </div>
+    <mat-grid-list cols="4" rowHeight="80px" *ngIf="passbook.advancedSettings">
+      <mat-grid-tile colspan="4">
+        <h3>Password Rules</h3>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2">
+        <mat-slide-toggle class="app-margin full-width"
+                          [(ngModel)]="passbook.passwordIncludeLower">
+          Lower Case Letters
+        </mat-slide-toggle>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2">
+        <mat-slide-toggle class="app-margin full-width"
+                          [(ngModel)]="passbook.passwordIncludeUpper">
+          Upper Case Letters
+        </mat-slide-toggle>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2">
+        <mat-slide-toggle class="app-margin full-width"
+                          [(ngModel)]="passbook.passwordIncludeNumbers">
+          Numbers
+        </mat-slide-toggle>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="2">
+        <mat-slide-toggle class="app-margin full-width"
+                          [(ngModel)]="passbook.passwordIncludeSpecial">
+          Special Characters
+        </mat-slide-toggle>
+      </mat-grid-tile>
+
+    </mat-grid-list>
+    <div class="center">
+      <button mat-flat-button color="warn"
+              *ngIf="passbookId!=null"
+              (click)="popupDialog(confirmDeleteDialog, {passbook:passbook})">
+        Delete Passbook
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button mat-button
+            tabindex="3"
+            (click)="onSave()" color="primary" [disabled]="!formIsValid()" *ngIf="passbookId==null">
+      Create
+    </button>
+    <button mat-button
+            tabindex="3"
+            (click)="onSave()" color="primary" [disabled]="!formIsValid()" *ngIf="passbookId!=null">
+      Save
+    </button>
+
+    <button mat-button
+            tabindex="4"
+            (click)="onCancel()">
+      Cancel
+    </button>
+  </div>
+</div>

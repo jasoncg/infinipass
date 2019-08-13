@@ -1,0 +1,26 @@
+.full-width {
+  width: 100%;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+/*
+.tab-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  min-height: 300px;
+}*/
+.tab-box {
+  margin: 0;
+  padding: 0;
+  border-radius: 8px;
+  min-height: 300px;
+}
+
+.tab-box div {
+  padding: 10px;
+}

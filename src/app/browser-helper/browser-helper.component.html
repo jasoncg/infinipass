@@ -1,0 +1,35 @@
+<h1 *ngIf="tabUrl!=null">
+  {{tabUrl.hostname}}
+</h1>
+<h1 *ngIf="tabUrl==null">
+  No URL
+</h1>
+<div *ngIf="services.length==0">
+  <div *ngIf="passbooks.length==0">
+    Click the <mat-icon>add</mat-icon> button to create a passbook
+  </div>
+  <div *ngIf="passbooks.length>0">
+    Click the <mat-icon>add</mat-icon> button to generate a password for this website
+  </div>
+</div>
+<div class="services-container">
+
+    <app-passbook-service-item
+        *ngFor="let service of services; index as serviceIndex"
+        [passbookId]="service.passbookId"
+        [serviceId]="service.id"></app-passbook-service-item>
+
+</div>
+<button mat-fab
+        *ngIf="passbooks.length>0"
+        class="fab-container"
+        (click)="addNewService()">
+  <mat-icon>add</mat-icon>
+</button>
+
+<button mat-fab
+        *ngIf="passbooks.length==0"
+        class="fab-container"
+        (click)="addNewPassbook()">
+  <mat-icon>add</mat-icon>
+</button>

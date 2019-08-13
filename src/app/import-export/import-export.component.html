@@ -1,0 +1,135 @@
+<mat-card class="mat-elevation-z8" style="width:95%;margin:auto">
+  <mat-card-header>
+    <mat-card-title>Export Database</mat-card-title>
+    <mat-card-subtitle>Backup your passbooks or copy to another system</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field class="full-width">
+      <input matInput class="full-width"
+             placeholder="Password"
+             tabindex="1"
+             type="text"
+             [(ngModel)]="password"
+             (paste)="encryptedDataForExport=null"
+             (input)="encryptedDataForExport=null">
+      <mat-hint>This password will be used to encrypt the database.</mat-hint>
+      <mat-error *ngIf="password==''">
+        A password is required
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-stroked-button (click)="prepareExportData()"
+            [disabled]="password==''"
+            >Prepare Export</button>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-stroked-button
+            (click)="exportToClipboard()"
+            [disabled]="encryptedDataForExport==null"
+            >Copy to Clipboard</button>
+    <a mat-stroked-button
+            [disabled]="downloadLink==null||encryptedDataForExport==null"
+            [href]="downloadLink"
+            download="passbooks.txt"
+            >Save to File</a>
+  </mat-card-actions>
+</mat-card>
+
+<br />
+<mat-card class="mat-elevation-z8" style="width:95%;margin:auto">
+  <mat-card-header>
+    <mat-card-title>Import Database</mat-card-title>
+    <mat-card-subtitle>Restore your passbooks from backup or copy from another system</mat-card-subtitle>
+
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field class="full-width">
+      <input matInput class="full-width"
+             placeholder="Password"
+             type="text"
+             [(ngModel)]="password"
+             (paste)="decryptDataFromImport()"
+             (input)="decryptDataFromImport()">
+
+      <mat-hint>The password that was used when the database was exported.</mat-hint>
+      <mat-error *ngIf="password==''">
+        A password is required
+      </mat-error>
+    </mat-form-field>
+    <div class="full-width">
+      <button mat-button mat-stroked-button
+              [disabled]="dataImportInProgress"
+              (click)="pasteTextVisible=true">
+        Paste Text
+      </button>
+      <button mat-button mat-stroked-button
+              [disabled]="dataImportInProgress"
+              (click)="clickField('fileInput')">
+        Upload File
+      </button>
+      <input type="file" hidden (change)="uploadFile($event)" id="fileInput" />
+    </div>
+    <mat-form-field class="full-width" *ngIf="pasteTextVisible">
+      <textarea matInput class="full-width"
+                placeholder="Paste Text Here"
+                type="text"
+                [(ngModel)]="encryptedDataForImport"
+                [disabled]="dataImportInProgress"
+                (paste)="decryptDataFromImport()"
+                (input)="decryptDataFromImport()"></textarea>
+    </mat-form-field>
+    <mat-error *ngIf="decryptionError!=null">
+      {{decryptionError}}
+    </mat-error>
+    <div *ngIf="decryptedDataFromImport!=null&&!dataImportInProgress">
+      Database is valid. Click Import Data to import.
+    </div>
+    <div *ngIf="dataImportInProgress">
+      Importing...
+    </div>
+    <h1 *ngIf="decryptTimeout!=null||dataImportInProgress"
+        style="flex-grow:1;width:150px;text-align:center">
+      <app-random-animated-text symbols="000000000011111111112"
+                                style="color:rgba(1,1,1,0.5)"
+                                count="20"
+                                speed="5"></app-random-animated-text>
+    </h1>
+    <mat-accordion *ngIf="decryptedDataFromImport">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h3>Ready to import</h3>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+
+          <div *ngFor="let passbook of decryptedDataFromImport.passbooks; index as passbookIndex">
+            <h2>
+              {{passbook.name}} {{passbook.visualPassphrase}}
+            </h2>
+
+            <ng-container *ngFor="let service of decryptedDataFromImport.services; index as serviceIndex">
+              <!--
+              <app-passbook-service-item [passbookId]="service.passbookId"
+                                         [serviceId]="service.id"
+                                         [service]="service"
+                                         [passbook]="passbook"
+                                         class="tile"
+                                         asTile="true"></app-passbook-service-item>-->
+
+              <div *ngIf="service.passbookId==passbook.id">
+                {{service.name}} {{service.user}}
+              </div>
+            </ng-container>
+          </div>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-stroked-button
+            [disabled]="decryptedDataFromImport==null||dataImportInProgress"
+            (click)="importData()"
+            >Import Data</button>
+  </mat-card-actions>
+</mat-card>

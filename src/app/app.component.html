@@ -1,0 +1,58 @@
+<div class="app-container">
+  <ng-container *ngIf="encryptionKeyRequired()">
+    <mat-toolbar color="primary" class="example-toolbar mat-elevation-z8">
+      <h1 class="example-app-name">{{getTitle()!=''?getTitle():'Infinipass'}}</h1>
+      <div class="flex-spacer"></div>
+      <a mat-button routerLink="/about">About</a>
+    </mat-toolbar>
+
+    <mat-card>
+      <mat-card-title>
+        Unlock Infinipass Database
+      </mat-card-title>
+      <mat-card-content>
+        <form (submit)="unlockDatabase()">
+          <mat-form-field class="full-width">
+            <input matInput placeholder="Password"
+                   type="password"
+                   name="unlockpassword"
+                   autofocus
+                   [(ngModel)]="databasePassword">
+          </mat-form-field>
+          <mat-error *ngIf="databasePasswordErrors">
+            {{databasePasswordErrors}}
+          </mat-error>
+          <button mat-raised-button
+                  color="accent"
+                  (click)="unlockDatabase()">
+            Unlock
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+  <ng-container *ngIf="!encryptionKeyRequired()">
+    <mat-toolbar color="primary" class="example-toolbar mat-elevation-z8">
+      <button mat-icon-button (click)="sidenav.opened=!sidenav.opened" *ngIf="innerWidth<1024">
+        <mat-icon *ngIf="!sidenav.opened">menu</mat-icon>
+        <mat-icon *ngIf="sidenav.opened">close</mat-icon>
+      </button>
+      <h1 class="example-app-name">{{getTitle()!=''?getTitle():'Infinipass'}}</h1>
+      <div class="flex-spacer"></div>
+      <a mat-button routerLink="/about">About</a>
+    </mat-toolbar>
+    <!--
+  <app-top-bar></app-top-bar>
+  -->
+    <mat-sidenav-container class="app-sidenav-container">
+      <mat-sidenav #sidenav [mode]="innerWidth<600?'over':'side'"
+                   [opened]="innerWidth<1024?sidenav.opened:true">
+        <app-sidebar></app-sidebar>
+      </mat-sidenav>
+
+      <mat-sidenav-content>
+        <router-outlet></router-outlet>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </ng-container>
+</div>

@@ -1,0 +1,277 @@
+
+<mat-card style="width:95%; margin:auto" class="mat-elevation-z8">
+  <mat-card-title>
+    Quick Generate
+  </mat-card-title>
+  <mat-card-content>
+    <form autocomplete="off" autocapitalize="off">
+      <input autocomplete="off" name="hidden" type="text" style="display:none;">
+      <div class="full-width" style="display:flex">
+        <mat-form-field style="flex-grow:100">
+          <input matInput placeholder="Passphrase"
+                 tabindex="1"
+                 autocomplete="new-password"
+                 autocorrect="off"
+                 autocapitalize="none"
+                 [ngModelOptions]="{standalone: true}"
+                 [type]="quickGenerate.passphraseVisible?'text':'password'"
+                 (keyup)="generatePassphraseVisualization()"
+                 [(ngModel)]="quickGenerate.passphrase" />
+          <button mat-button color="primary"
+                  *ngIf="quickGenerate.passphraseVisible"
+                  matSuffix
+                  aria-label="Hide Passphrase"
+                  (click)="quickGenerate.passphraseVisible=false">
+            Hide
+          </button>
+          <button mat-button color="primary"
+                  *ngIf="!quickGenerate.passphraseVisible"
+                  matSuffix
+                  aria-label="Show Passphrase"
+                  (click)="quickGenerate.passphraseVisible=true">
+            Show
+          </button>
+          <button mat-button *ngIf="quickGenerate.passphrase" matSuffix mat-icon-button aria-label="Clear" (click)="quickGenerate.passphrase=''">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint>Case Sensitive. This should be something you can memorize.</mat-hint>
+        </mat-form-field>
+
+        <h1 style="flex-grow:1;width:150px;text-align:center">
+          <ng-container *ngIf="timeoutVisualization===null">{{quickGenerate.passphraseVisualization}}</ng-container>
+          <app-random-animated-text [symbols]="visualizationCharacters"
+                                    *ngIf="timeoutVisualization!==null"
+                                    style="color:rgba(1,1,1,0.5)"
+                                    speed="50"></app-random-animated-text>
+        </h1>
+      </div>
+
+      <mat-form-field class="full-width">
+        <input matInput class="full-width"
+               tabindex="2"
+               placeholder="Service Name / Website"
+               autocorrect="off"
+               autocapitalize="none"
+               [ngModelOptions]="{standalone: true}"
+               (keyup)="quickGeneratePassword()"
+               (change)="quickGeneratePassword()"
+               [(ngModel)]="quickGenerate.serviceName">
+        <button mat-button *ngIf="quickGenerate.serviceName" matSuffix mat-icon-button aria-label="Clear" (click)="quickGenerate.serviceName=''">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-hint>Be consistent. For websites we recommend something like "google.com" not "Google" or "www.google.com"</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput class="full-width"
+               placeholder="User Name"
+               tabindex="3"
+               autocorrect="off"
+               autocapitalize="none"
+               [ngModelOptions]="{standalone: true}"
+               (keyup)="quickGeneratePassword()"
+               (change)="quickGeneratePassword()"
+               [(ngModel)]="quickGenerate.userName">
+        <button mat-button *ngIf="quickGenerate.userName" matSuffix mat-icon-button aria-label="Clear" (click)="quickGenerate.userName=''">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-hint>Optional username helps differentiate multiple accounts.</mat-hint>
+      </mat-form-field>
+
+      <mat-slide-toggle [ngModelOptions]="{standalone: true}"
+                        (change)="quickGeneratePassword()"
+                        [(ngModel)]="quickGenerate.advancedSettings">
+        Enable Advanced Settings
+      </mat-slide-toggle>
+
+      <div class="full-width" *ngIf="quickGenerate.advancedSettings">
+        <mat-slide-toggle [ngModelOptions]="{standalone: true}"
+                          (change)="quickGeneratePassword()"
+                          [(ngModel)]="quickGenerate.caseSensitiveServiceData">
+          Case Sensitive Service Name and User Name
+        </mat-slide-toggle>
+        <div>
+          <mat-hint>
+            By default, service name (website) and user name are case insensitive. It is recommended you leave this disabled.
+          </mat-hint>
+        </div>
+      </div>
+      <mat-grid-list cols="2" rowHeight="80px" *ngIf="quickGenerate.advancedSettings">
+        <mat-grid-tile>
+          <mat-form-field class="full-width">
+            <input matInput class="full-width" type="number"
+                   placeholder="Password Length"
+                   tabindex="4"
+                   min="1"
+                   [ngModelOptions]="{standalone: true}"
+                   (change)="quickGeneratePassword()"
+                   (keyup)="quickGeneratePassword()"
+                   [(ngModel)]="quickGenerate.passwordLength" />
+          </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-form-field class="full-width">
+            <input matInput class="full-width" type="number"
+                   min="1"
+                   tabindex="5"
+                   placeholder="PIN Length"
+                   [ngModelOptions]="{standalone: true}"
+                   (change)="quickGeneratePassword()"
+                   (keyup)="quickGeneratePassword()"
+                   [(ngModel)]="quickGenerate.pinLength" />
+          </mat-form-field>
+        </mat-grid-tile>
+      </mat-grid-list>
+
+      <mat-grid-list cols="4" rowHeight="50px">
+
+
+        <mat-grid-tile colspan="1">
+          <h3 class="full-width">Version</h3>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="1">
+          {{quickGenerate.version}}
+        </mat-grid-tile>
+        <mat-grid-tile colspan="1">
+          <button mat-stroked-button style="width:100%;height:100%"
+                  (click)="quickGenerate.version=Math.max(0,quickGenerate.version-1);quickGeneratePassword()"
+                  color="accent">
+            Decrement
+          </button>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="1">
+          <button mat-stroked-button style="width:100%;height:100%"
+                  (click)="quickGenerate.version=quickGenerate.version+1;quickGeneratePassword()"
+                  color="accent">
+            Increment
+          </button>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="4">
+          <p>If you need to change the password for this service, increment the version number to generate a new password.</p>
+        </mat-grid-tile>
+
+      </mat-grid-list>
+
+      <mat-list role="list">
+        <mat-grid-list cols="3" rowHeight="50px">
+
+          <mat-grid-tile>
+            <h3>Password</h3>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <ng-container *ngIf="quickGenerate.passwordVisible">
+              <p *ngIf="(timeoutPassword===null && timeoutVisualization===null)">
+                {{quickGenerate.passwordResult}}
+              </p>
+              <app-random-animated-text symbols="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+                                        *ngIf="timeoutPassword!==null || timeoutVisualization!==null"
+                                        [count]="quickGenerate.passwordLength"
+                                        style="color:rgba(1,1,1,0.5)"
+                                        speed="50"></app-random-animated-text>
+            </ng-container>
+            <button *ngIf="!quickGenerate.passwordVisible"
+                    mat-stroked-button
+                    [disabled]="timeoutPassword!==null || timeoutVisualization!==null"
+                    (click)="showPassword()" color="accent">
+              Show
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <button mat-stroked-button
+                    (click)="copyToClipboardPassword()"
+                    [disabled]="timeoutPassword!==null || timeoutVisualization!==null"
+                    aria-label="Copy to clipboard" matTooltip="Copy">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <h3>PIN</h3>
+          </mat-grid-tile>
+          <mat-grid-tile>
+
+            <ng-container *ngIf="quickGenerate.pinVisible">
+              <p *ngIf="(timeoutPassword===null && timeoutVisualization===null)">
+                {{quickGenerate.pinResult}}
+              </p>
+              <app-random-animated-text symbols="0123456789"
+                                        *ngIf="timeoutPassword!==null || timeoutVisualization!==null"
+                                        [count]="quickGenerate.pinLength"
+                                        style="color:rgba(1,1,1,0.5)"
+                                        speed="50"></app-random-animated-text>
+            </ng-container>
+            <button *ngIf="!quickGenerate.pinVisible"
+                    [disabled]="timeoutPassword!==null || timeoutVisualization!==null"
+                    mat-stroked-button (click)="showPin()" color="accent">
+              Show
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <button mat-stroked-button
+                    [disabled]="timeoutPassword!==null || timeoutVisualization!==null"
+                    (click)="copyToClipboardPin()" aria-label="Copy to clipboard" matTooltip="Copy">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-list>
+    </form>
+
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Custom Strings</mat-panel-title>
+          <mat-panel-description>This can be used to create responses for secret questions</mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-grid-list cols="10" rowHeight="75px">
+          <mat-grid-tile colspan="5">
+            <mat-form-field class="full-width" style="width:100%;height:100%">
+              <input matInput class="full-width"
+                     placeholder="Text"
+                     (keyup)="generateCustomEncryptedStringRefresh()"
+                     [(ngModel)]="encryptCustomString">
+              <mat-hint>
+                White space characters will be removed and
+                the text coverted to lower case automatically
+                before encrypting
+              </mat-hint>
+            </mat-form-field>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="3">
+            <app-random-animated-text symbols="01"
+                                      speed="20"
+                                      count="5"
+                                      *ngIf="timeoutEncryptStringRefresh!=null"></app-random-animated-text>
+            <p *ngIf="encryptCustomStringResultVisible && timeoutEncryptStringRefresh==null">{{encryptCustomStringResult}}</p>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="1">
+            <button *ngIf="!encryptCustomStringResultVisible"
+                    [disabled]="timeoutEncryptStringRefresh"
+                    mat-stroked-button
+                    (click)="encryptCustomStringResultVisible=!encryptCustomStringResultVisible" color="accent">
+              Show
+            </button>
+            <button *ngIf="encryptCustomStringResultVisible"
+                    [disabled]="timeoutEncryptStringRefresh"
+                    mat-stroked-button
+                    (click)="encryptCustomStringResultVisible=!encryptCustomStringResultVisible" color="accent">
+              Hide
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile colspan="1">
+            <button mat-stroked-button
+                    [disabled]="timeoutEncryptStringRefresh"
+                    (click)="copyToClipboardEncryptCustomStringResult()" aria-label="Copy custom encrypted string to clipboard"
+                    matTooltip="Copy">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+
+          </mat-grid-tile>
+
+        </mat-grid-list>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-card-content>
+
+</mat-card>

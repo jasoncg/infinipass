@@ -1,0 +1,12 @@
+.full-width {
+  width: 100%;
+}
+
+mat-grid-tile button {
+  height: 100%;
+  width: 100%;
+}
+
+.spacer {
+  flex-grow: 1;
+}
